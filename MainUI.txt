@@ -278,7 +278,7 @@ loadAgeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 loadAgeBtn.MouseButton1Click:Connect(function()
  -- Put your Lvl 50 Pet Age Loader Here
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ShiraInuba01/maomaoscripts/main/Lvl50Egg.txt"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ren-ryu/lae-scripts-/refs/heads/main/LVL50PetLoader.txt"))()
 end)
 
 -- 🛠️ Pet Mutation Finder Button
@@ -293,7 +293,7 @@ mutationBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 mutationBtn.MouseButton1Click:Connect(function()
  -- Put your Pet Mutation Loader Here
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ShiraInuba01/maomaoscripts/main/PetMutationFinder.txt"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ren-ryu/lae-scripts-/refs/heads/main/PetMutationRandomizerLoader.txt"))()
 end)
 
 -- 👤 Credit
@@ -301,7 +301,7 @@ local credit = Instance.new("TextLabel", frame)
 credit.Size = UDim2.new(1, 0, 0, 20)
 credit.Position = UDim2.new(0, 0, 0, 22)
 credit.BackgroundTransparency = 1
-credit.Text = "Made by - MaoMao"
+credit.Text = "Made by - Lae Scripts"
 credit.Font = Enum.Font.FredokaOne
 credit.TextSize = 14
 credit.TextColor3 = Color3.fromRGB(200, 200, 200)
