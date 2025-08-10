@@ -1,0 +1,95 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local originalData = {}
+
+local function getEquippedPetTool()
+    local char = player.Character or player.CharacterAdded:Wait()
+    for _, tool in pairs(char:GetChildren()) do
+        if tool:IsA("Tool") then
+            return tool
+        end
+    end
+    return nil
+end
+
+local function setPetSize(petTool, scale)
+    if petTool:IsA("Model") then
+        petTool:ScaleTo(scale)
+    elseif petTool:IsA("Tool") then
+        for _, obj in ipairs(petTool:GetChildren()) do
+            if obj:IsA("Model") then
+                obj:ScaleTo(scale)
+            elseif obj:IsA("BasePart") then
+                local mesh = obj:FindFirstChildOfClass("SpecialMesh")
+                if mesh then
+                    mesh.Scale = Vector3.new(scale, scale, scale)
+                else
+                    obj.Size = Vector3.new(scale, scale, scale)
+                end
+            end
+        end
+    end
+end
+
+local function updatePetNameWithWeight(tool, weight)
+    local name = tool.Name
+    if name:find("%[%d+%.?%d* KG%]") then
+        local newName = name:gsub("%[%d+%.?%d* KG%]", string.format("[%.2f KG]", weight))
+        tool.Name = newName
+    else
+        tool.Name = name .. string.format(" [%.2f KG]", weight)
+    end
+end
+
+local function removeWeightFromName(name)
+    return (name:gsub("%s*%[%d+%.?%d* KG%]", ""))
+end
+
+local function saveOriginalData(tool)
+    if not originalData[tool] then
+        local originalScale = 1
+        for _, obj in ipairs(tool:GetChildren()) do
+            if obj:IsA("BasePart") then
+                local mesh = obj:FindFirstChildOfClass("SpecialMesh")
+                if mesh then
+                    originalScale = mesh.Scale.X
+                    break
+                else
+                    originalScale = obj.Size.X
+                    break
+                end
+            end
+        end
+        local weight = tonumber(tool.Name:match("%[(%d+%.?%d*) KG%]")) or originalScale
+        originalData[tool] = {
+            scale = originalScale,
+            weight = weight,
+            name = removeWeightFromName(tool.Name),
+            currentScale = originalScale,
+            currentWeight = weight,
+        }
+    end
+end
+
+local function applyWeight(weight)
+    if not weight or weight < 1 or weight > 1000 then return end
+    local tool = getEquippedPetTool()
+    if tool then
+        saveOriginalData(tool)
+        setPetSize(tool, weight)
+        updatePetNameWithWeight(tool, weight)
+        originalData[tool].currentScale = weight
+        originalData[tool].currentWeight = weight
+    end
+end
+
+local function resetWeight()
+    local tool = getEquippedPetTool()
+    if tool and originalData[tool] then
+        local orig = originalData[tool]
+        setPetSize(tool, orig.scale)
+        tool.Name = orig.name
+        originalData[tool].currentScale = orig.scale
+        originalData[tool].currentWeight = orig.weight
+    end
+end
